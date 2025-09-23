@@ -13,25 +13,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/checkout")
 class CheckoutController(
     private val paymentService: PaymentService,
-    private val cartService: CartService // Assuming we use this to get the cart DTO
+    private val cartService: CartService // Use to obtain the current cart Order entity
 ) {
 
     @PostMapping("/create-preference")
     fun createPreference(@AuthenticationPrincipal user: UserDetails): ResponseEntity<Map<String, String>> {
-        // In a real app, we'd fetch the full Order entity here to pass to the payment service.
-        // For now, let's assume the cart service can give us what we need or we fetch it directly.
-        // This part needs a bit of refactoring to get the full Order entity.
-        // Let's create a placeholder method in CartService for this.
-
-        // This is a conceptual placeholder. The actual implementation needs to fetch the Order entity.
-        // I will refactor this after creating the file.
-        // For now, let's assume we can get the redirect URL.
-        val redirectUrl = "https://placeholder.mercadopago.com" // paymentService.createPreference(...)
-
-        return if (redirectUrl != null) {
-            ResponseEntity.ok(mapOf("redirectUrl" to redirectUrl))
-        } else {
-            ResponseEntity.internalServerError().body(mapOf("error" to "Could not create payment preference"))
-        }
+        val cartOrder = cartService.getCartEntityForUser(user.username)
+        val redirectUrl = paymentService.createPreference(cartOrder)
+        return redirectUrl?.let { ResponseEntity.ok(mapOf("redirectUrl" to it)) }
+            ?: ResponseEntity.internalServerError().body(mapOf("error" to "Could not create payment preference"))
     }
 }

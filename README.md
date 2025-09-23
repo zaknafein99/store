@@ -73,3 +73,20 @@ The UI calls endpoints under `/api` (for example, the home view loads products f
 - DB connection errors: update `spring.datasource.*` to match your local PostgreSQL setup.
 
 This project is for learning/demo purposes.
+
+**How to Deploy**
+- Frontend only (static hosting):
+  - Run `cd frontend && npm ci && npm run build`.
+  - Upload `frontend/dist` to your static host (e.g., Netlify, Vercel, S3/CloudFront, NGINX).
+  - Configure the host to proxy `/api` to your backend origin.
+- Backend (Jar on a VM/container):
+  - Provision PostgreSQL and set env vars for Spring:
+    - `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`
+    - `APP_JWT_SECRET`, `APP_JWT_EXPIRATION_IN_MS`
+    - `APP_FRONTEND_URL` (CORS)
+  - Build the jar: `cd backend && ./gradlew bootJar`.
+  - Run: `java -jar build/libs/*.jar` (use a process manager like systemd or run in a container).
+- One‑server setup (serve SPA from backend):
+  - Build frontend: `cd frontend && npm ci && npm run build`.
+  - Copy `frontend/dist` into a Spring static resources directory or configure a `ResourceHandler` to serve it.
+  - Ensure SPA routing falls back to `index.html` for unknown paths.
