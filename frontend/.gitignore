@@ -28,3 +28,8 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Vite/Env files
+.env.local
+.env.*.local
+.eslintcache
