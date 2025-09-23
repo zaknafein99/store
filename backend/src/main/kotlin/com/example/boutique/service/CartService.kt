@@ -83,6 +83,3 @@ class CartService(
         return CartViewDTO(items = items, totalPrice = totalPrice)
     }
 }
-
-// Need to add findByCustomerAndStatus to OrderRepository
-// fun findByCustomerAndStatus(customer: Customer, status: OrderStatus): Optional<Order>
