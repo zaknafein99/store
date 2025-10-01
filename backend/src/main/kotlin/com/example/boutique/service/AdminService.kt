@@ -1,49 +1,45 @@
 package com.example.boutique.service
 
-import com.example.boutique.domain.Product
-import com.example.boutique.dto.ProductUpsertDTO
-import com.example.boutique.repository.ProductRepository
+import com.example.boutique.domain.Customer
+import com.example.boutique.repository.CustomerRepository
 import com.example.boutique.repository.OrderRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.util.*
 
 @Service
-@Transactional
 class AdminService(
-    private val productRepository: ProductRepository,
+    private val customerRepository: CustomerRepository,
     private val orderRepository: OrderRepository
 ) {
 
-    fun createProduct(dto: ProductUpsertDTO): Product {
-        val product = Product(
-            name = dto.name,
-            description = dto.description,
-            price = dto.price,
-            material = dto.material,
-            sizes = dto.sizes,
-            colors = dto.colors,
-            photos = dto.photos
+    fun getDashboardSummary(): DashboardSummary {
+        val totalUsers = customerRepository.count()
+        val totalOrders = orderRepository.count()
+        val totalRevenue = orderRepository.findAll()
+            .flatMap { it.items }
+            .sumOf { it.priceAtPurchase.multiply(it.quantity.toBigDecimal()) }
+            .toDouble()
+
+        return DashboardSummary(
+            totalUsers = totalUsers,
+            totalOrders = totalOrders,
+            totalRevenue = totalRevenue
         )
-        return productRepository.save(product)
     }
 
-    fun updateProduct(id: Long, dto: ProductUpsertDTO): Optional<Product> {
-        return productRepository.findById(id).map { existingProduct ->
-            existingProduct.name = dto.name
-            existingProduct.description = dto.description
-            existingProduct.price = dto.price
-            existingProduct.material = dto.material
-            existingProduct.sizes = dto.sizes
-            existingProduct.colors = dto.colors
-            existingProduct.photos = dto.photos
-            productRepository.save(existingProduct)
-        }
+    fun getAllUsers(): List<Customer> {
+        return customerRepository.findAll()
     }
 
-    fun deleteProduct(id: Long) {
-        if (productRepository.existsById(id)) {
-            productRepository.deleteById(id)
-        }
+    fun toggleAdminStatus(userId: Long): Customer {
+        val customer = customerRepository.findById(userId)
+            .orElseThrow { NoSuchElementException("User not found with id: $userId") }
+        customer.isAdmin = !customer.isAdmin
+        return customerRepository.save(customer)
     }
 }
+
+data class DashboardSummary(
+    val totalUsers: Long,
+    val totalOrders: Long,
+    val totalRevenue: Double
+)

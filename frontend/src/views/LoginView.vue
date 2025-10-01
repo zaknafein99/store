@@ -14,7 +14,11 @@ async function handleLogin() {
   error.value = null
   try {
     await authStore.login(email.value, password.value)
-    router.push({ name: 'home' })
+    if (authStore.isAdmin) {
+      router.push({ name: 'admin-dashboard' })
+    } else {
+      router.push({ name: 'home' })
+    }
   } catch (err) {
     error.value = 'Invalid email or password.'
   }

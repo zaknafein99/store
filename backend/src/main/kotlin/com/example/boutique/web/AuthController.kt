@@ -30,7 +30,8 @@ class AuthController(
         )
         SecurityContextHolder.getContext().authentication = authentication
         val token = jwtTokenProvider.generateToken(authentication)
-        return ResponseEntity.ok(LoginResponseDTO(token))
+        val roles = authentication.authorities.map { it.authority }
+        return ResponseEntity.ok(LoginResponseDTO(token = token, roles = roles))
     }
 
     @PostMapping("/register")

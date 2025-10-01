@@ -4,10 +4,11 @@ import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null)
-  const user = ref(JSON.parse(localStorage.getItem('user')) || null) // For simplicity, we'll just store email
+  const user = ref(JSON.parse(localStorage.getItem('user')) || null)
   const router = useRouter()
 
   const isAuthenticated = computed(() => !!token.value)
+  const isAdmin = computed(() => user.value?.roles?.includes('ROLE_ADMIN'))
 
   function setToken(newToken) {
     token.value = newToken
@@ -32,7 +33,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const data = await response.json()
     setToken(data.token)
-    setUser({ email }) // Simplified user object
+    setUser({ email, roles: data.roles })
   }
 
   async function register(email, password) {

@@ -23,7 +23,13 @@ import { RouterView, RouterLink } from 'vue-router'
         >
           Products
         </RouterLink>
-        <!-- Add other admin links here, e.g., for Orders -->
+        <RouterLink
+          :to="{ name: 'admin-users' }"
+          class="block px-4 py-2 rounded hover:bg-gray-700"
+          active-class="bg-blue-600"
+        >
+          Users
+        </RouterLink>
       </nav>
     </aside>
     <main class="flex-1 p-8 overflow-y-auto">
