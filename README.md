@@ -48,7 +48,6 @@ Vue 3 + Spring Boot boutique shop with products, auth, cart, and admin tooling.
 ## Next Steps
 
 - Implement `CustomUserDetailsService` and define roles/authorities
-- Add `CART` to `OrderStatus` (or adjust CartService)
 - Add router guard for `meta.requiresAuth`
 - Replace admin placeholders with real authenticated calls
 
