@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import java.math.BigDecimal
 
 @Configuration
@@ -14,6 +15,7 @@ class ProductSeeder {
     private val log = LoggerFactory.getLogger(ProductSeeder::class.java)
 
     @Bean
+    @Order(2)
     fun seedSampleProducts(productRepository: ProductRepository): CommandLineRunner = CommandLineRunner {
         if (productRepository.count() > 0) {
             log.info("Products already present, skipping seeding")
