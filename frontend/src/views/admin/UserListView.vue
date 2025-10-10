@@ -92,6 +92,7 @@ onMounted(fetchUsers)
                 @click="toggleAdminStatus(user)"
                 class="px-4 py-2 font-semibold text-white rounded-md"
                 :class="user.isAdmin ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'"
+                :disabled="user.email === authStore.user.email"
               >
                 {{ user.isAdmin ? 'Revoke Admin' : 'Make Admin' }}
               </button>

@@ -36,6 +36,7 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: () => import('../views/admin/AdminView.vue'),
+      meta: { requiresAdmin: true },
       children: [
         {
           path: '',
@@ -73,7 +74,7 @@ router.beforeEach((to, from, next) => {
 
   if (to.matched.some(record => record.meta.requiresAuth) && !auth.isAuthenticated) {
     next({ name: 'login' })
-  } else if (to.matched.some(record => record.name?.startsWith('admin')) && !auth.isAdmin) {
+  } else if (to.matched.some(record => record.meta.requiresAdmin) && !auth.isAdmin) {
     next({ name: 'home' })
   } else {
     next()

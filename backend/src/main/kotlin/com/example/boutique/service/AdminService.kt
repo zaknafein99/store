@@ -14,10 +14,7 @@ class AdminService(
     fun getDashboardSummary(): DashboardSummary {
         val totalUsers = customerRepository.count()
         val totalOrders = orderRepository.count()
-        val totalRevenue = orderRepository.findAll()
-            .flatMap { it.items }
-            .sumOf { it.priceAtPurchase.multiply(it.quantity.toBigDecimal()) }
-            .toDouble()
+        val totalRevenue = orderRepository.calculateTotalRevenue() ?: 0.0
 
         return DashboardSummary(
             totalUsers = totalUsers,
