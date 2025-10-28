@@ -1,5 +1,6 @@
 package com.example.boutique.web
 
+import com.example.boutique.dto.AdminUserDTO
 import com.example.boutique.service.AdminService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -17,22 +18,20 @@ class AdminController(private val adminService: AdminService) {
     }
 
     @GetMapping("/users")
-    fun getAllUsers(): ResponseEntity<List<com.example.boutique.domain.Customer>> {
-        val users = adminService.getAllUsers().map { 
-            // TODO: Map to a DTO to avoid exposing password hash
-            it
-        }
+    fun getAllUsers(): ResponseEntity<List<AdminUserDTO>> {
+        val users = adminService.getAllUsers()
         return ResponseEntity.ok(users)
     }
 
     @PostMapping("/users/{userId}/toggle-admin")
-    fun toggleAdminStatus(@PathVariable userId: Long): ResponseEntity<com.example.boutique.domain.Customer> {
+    fun toggleAdminStatus(@PathVariable userId: Long): ResponseEntity<AdminUserDTO> {
         return try {
             val updatedUser = adminService.toggleAdminStatus(userId)
-            // TODO: Map to a DTO to avoid exposing password hash
             ResponseEntity.ok(updatedUser)
         } catch (e: NoSuchElementException) {
             ResponseEntity.notFound().build()
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.badRequest().build()
         }
     }
 }
